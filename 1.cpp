@@ -1,26 +1,18 @@
-/**
- * Given an array of integers, return indices of the two numbers such that
- * they add up to a specific target.
- *
- * You may assume that each input would have exactly one solution, and you
- * may not use the same element twice.
- *
- * Example:
- *
- * Given nums = [2, 7, 11, 15], target = 9,
- *
- * Because nums[0] + nums[1] = 2 + 7 = 9,
- * return [0, 1].
- */
-
 #include <vector>
 #include <iostream>
-
+#include <unordered_map>
+#include "./include/helper.h"
 using std::vector;
+using std::unordered_map;
 
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
+        /**
+         * Brutal force:
+         * Time complexity: O(n^2).
+         * Space complexity: O(1).
+         */
         vector<int> rst(2);
         int size = nums.size();
         for (int i = 0; i < size; ++i) {
@@ -33,17 +25,52 @@ public:
         }
         return rst;
     }
+
+    vector<int> twoSum_2(vector<int>& nums, int target) {
+        /**
+         * Use hash table.
+         * key = nums[i], val = i;
+         *
+         * Time complexity: O(n)
+         * Space complexity: O(n).
+         */
+        unordered_map<int, int> umap;
+        for (int i = 0; i < nums.size(); ++i) {
+            umap[nums[i]] = i;
+        }
+
+        vector<int> ans;
+        for (int i = 0; i < nums.size(); ++i) {
+            int rst_val = target - nums[i];
+            auto map_element = umap.find(rst_val);
+            std::cout << "Try i=" <<  i << ", nums=" << nums[i] << std::endl;
+            if (map_element != umap.end() && map_element->second != i) {
+                ans.push_back(i);
+                ans.push_back(map_element->second);
+                std::cout << "found.\n";
+                break;
+            }
+        }
+        return ans;
+    }
 };
 
 int main()
 {
     vector<int> nums = {2, 7, 11, 15};
+    nums = {3, 2, 4};
     int target = 13;
+    target = 6;
+
+    std::cout << "Input: \n";
+    show_vec(nums);
 
     Solution solver;
     auto rst = solver.twoSum(nums, target);
-    for (auto i : rst) {
-        std::cout << i << ", ";
-    }
-    std::cout << std::endl;
+    std::cout << "algo1: \n";
+    show_vec(rst);
+
+    rst = solver.twoSum_2(nums, target);
+    std::cout << "algo2: \n";
+    show_vec(rst);
 }
